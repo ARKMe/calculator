@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.division_sign_button).setOnClickListener(new OperationalSignButtonListener(new Division()));
 
         findViewById(R.id.equals_sign_button).setOnClickListener(new ResultButtonListener());
+
+        findViewById(R.id.cancel_button).setOnClickListener(new CancButtonListener());
     }
 
     private class NumberButtonListener implements View.OnClickListener {
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             String displayedNumberString = mDisplayedResultTextView.getText().toString();
-            if(mReadyToReceiveNumber){
+            if(mReadyToReceiveNumber || displayedNumberString.equals("0")){
                 mDisplayedResultTextView.setText("" + value);
                 mReadyToReceiveNumber = false;
             } else {
@@ -93,15 +95,22 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            if(mReadyToReceiveNumber)
+            if(mReadyToReceiveNumber || mCurrentOperation == null)
                 return;
 
             mCurrentOperation.setOperator2(Integer.parseInt(mDisplayedResultTextView.getText().toString()));
-            if(mCurrentOperation.getOperator1() != null && mCurrentOperation.getOperator2() != null) {
-                mDisplayedResultTextView.setText(mCurrentOperation.calculate().toString());
-                mReadyToReceiveNumber = true;
-                mCurrentOperation = null;
-            }
+            mDisplayedResultTextView.setText(mCurrentOperation.calculate().toString());
+            mReadyToReceiveNumber = true;
+            mCurrentOperation = null;
+        }
+    }
+
+    private class CancButtonListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            mDisplayedResultTextView.setText("0");
+            mReadyToReceiveNumber = true;
         }
     }
 
